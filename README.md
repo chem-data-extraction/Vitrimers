@@ -1,16 +1,16 @@
-# Aptamer–protein binding dataset (project template)
+# Vitrimer thermomechanical properties and network relaxation kinetics
 
-Publication-ready **dataset project template** for the course *Extraction and preparation of chemical information*. Students move from a research topic to a structured, validated dataset with documented sources, extraction steps, cleaning pipeline, reports, and citation metadata.
+Publication-ready dataset for the course Extraction and preparation of chemical information.
 
-**Example topic:** Aptamer–protein binding dataset (replace with your own project in `project.json`).
+**Topic:** Vitrimer thermomechanical properties and network relaxation kinetics dataset.
 
 ## Scientific task
 
-Collect experimentally reported aptamer–protein binding measurements (sequences, targets, affinity values, assay context) so they can be compared across literature and database sources.
+Collect experimentally reported glass transition temperatures ($T_g$), characteristic topology relaxation times ($\tau^*$), and Arrhenius activation energies ($E_a$) for covalent adaptable networks (vitrimers) to enable downstream structure–property modeling (QSPR/ML) evaluating how monomer composition, dynamic linkage type, catalyst profile, and mechanical recycling cycles dictate network dynamics and thermal stability.
 
 ## What is one record?
 
-One **record** = one experimentally reported aptamer–protein binding measurement from a specific source (one row in `data/processed/dataset.csv`). See `project.json` and `reports/practice_01_record_and_schema.md`.
+One record = one experimentally reported thermomechanical or kinetic measurement for a specific vitrimer formulation (defined by its multi-component monomer SMILES mixture, dynamic linkage, and catalyst profile) under specific physical testing conditions from one identified source (one row in `data/processed/dataset.csv`).
 
 ## Repository structure
 
