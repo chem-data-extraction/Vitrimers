@@ -1,135 +1,176 @@
 {
   "schema_version": "0.1.0",
-  "dataset_title": "Aptamer–protein binding dataset",
+  "dataset_title": "Vitrimer Thermomechanical Properties and Network Relaxation Kinetics Dataset",
   "fields": [
     {
       "name": "record_id",
       "type": "string",
       "required": true,
-      "description": "Stable unique identifier for one binding measurement record.",
-      "example": "rec_apt_thrombin_2018_pdf_001"
+      "description": "Stable unique identifier for one vitrimer formulation or characterization record.",
+      "example": "rec_vit_epoxy_montarnal2011_pdf_001"
     },
     {
-      "name": "aptamer_sequence",
+      "name": "polymer_name",
       "type": "string",
       "required": true,
-      "description": "Nucleotide sequence of the aptamer (DNA or RNA), 5' to 3'.",
-      "example": "GGTTGGTGTGGTTGG",
-      "normalization_rule": "Uppercase; remove spaces and hyphens; keep only A,C,G,T,U."
+      "description": "Descriptive or chemical name of the network as given in the literature.",
+      "example": "Zinc-catalyzed epoxy-acid vitrimer network",
+      "normalization_rule": "Preserve original text representation; group by dynamic chemistry if generic."
     },
     {
-      "name": "target_name",
+      "name": "monomer_components_smiles",
       "type": "string",
       "required": true,
-      "description": "Name of the protein or biomolecular target.",
-      "example": "Thrombin"
+      "description": "Dot-separated canonical SMILES representing all raw monomer and crosslinker components forming the network matrix.",
+      "example": "CC1(C2=CC=C(OCC3CO3)C=C2)C4=CC=C(OCC5CO5)C=C4.CCCCCCCCC(=O)O",
+      "normalization_rule": "Standardize components individually via RDKit, sort alphabetically, and concatenate with dots."
     },
     {
-      "name": "target_type",
-      "type": "string",
-      "required": false,
-      "description": "Broad classification of the target (e.g. enzyme, receptor, toxin).",
-      "example": "serine protease"
-    },
-    {
-      "name": "measurement_type",
+      "name": "dynamic_link_type",
       "type": "string",
       "required": true,
-      "description": "Reported affinity or binding metric (Kd, Ki, IC50, etc.).",
-      "example": "Kd"
+      "description": "The predominant type of exchangeable dynamic covalent bond governing the network architecture.",
+      "example": "transesterification",
+      "allowed_values": [
+        "transesterification",
+        "transamination",
+        "silyl_ether_metathesis",
+        "imine_exchange",
+        "disulfide_exchange",
+        "other_associative",
+        "baseline_permanent"
+      ]
     },
     {
-      "name": "measurement_value",
+      "name": "catalyst_name",
+      "type": "string",
+      "required": true,
+      "description": "Chemical name or abbreviation of the catalyst driving the exchange reaction. Use 'none' for catalyst-free systems.",
+      "example": "Zn(Acac)2"
+    },
+    {
+      "name": "catalyst_loading_mol_pct",
       "type": "number",
       "required": false,
-      "description": "Numeric value as reported in the source.",
-      "example": 0.5
+      "description": "Molar concentration of the catalyst relative to the functional exchange groups, in mol%. Equal to 0 if catalyst_name is 'none'.",
+      "example": 5.0
     },
     {
-      "name": "measurement_unit",
-      "type": "string",
-      "required": false,
-      "description": "Unit of measurement_value (nM, μM, pM, etc.).",
-      "example": "nM",
-      "normalization_rule": "Map synonyms to nM, μM, pM, M; store original in notes if converted."
+      "name": "tg_value_c",
+      "type": "number",
+      "required": true,
+      "description": "Glass transition temperature standardized to Celsius (°C) via pipeline normalization routines.",
+      "example": 45.2
     },
     {
-      "name": "normalized_value_nm",
+      "name": "relaxation_time_s",
       "type": "number",
       "required": false,
-      "description": "Binding affinity converted to nanomolar (nM) for comparison.",
-      "example": 0.5,
-      "normalization_rule": "Convert measurement_value using measurement_unit to nM."
+      "description": "Characteristic network stress relaxation time (tau*, usually at 37% or 1/e of initial modulus) in seconds.",
+      "example": 85.0
     },
     {
-      "name": "assay_method",
-      "type": "string",
-      "required": false,
-      "description": "Experimental method used to obtain the measurement.",
-      "example": "surface plasmon resonance"
-    },
-    {
-      "name": "buffer",
-      "type": "string",
-      "required": false,
-      "description": "Buffer composition during the binding assay.",
-      "example": "PBS with 5 mM MgCl2"
-    },
-    {
-      "name": "temperature_c",
+      "name": "relaxation_temp_c",
       "type": "number",
       "required": false,
-      "description": "Assay temperature in degrees Celsius.",
-      "example": 25
+      "description": "The specific isothermal temperature condition in Celsius (°C) under which the relaxation_time_s was determined.",
+      "example": 170.0
+    },
+    {
+      "name": "activation_energy_kj_mol",
+      "type": "number",
+      "required": false,
+      "description": "Arrhenius activation energy (Ea) calculated from high-temperature stress relaxation or rheological rate measurements.",
+      "example": 88.3
+    },
+    {
+      "name": "tg_measurement_method",
+      "type": "string",
+      "required": true,
+      "description": "Experimental technique used to determine the glass transition temperature (Tg).",
+      "example": "DSC",
+      "allowed_values": [
+        "DSC",
+        "DMA_tan_delta",
+        "DMA_E_loss",
+        "TMA",
+        "other",
+        "unknown"
+      ]
+    },
+    {
+      "name": "relaxation_measurement_method",
+      "type": "string",
+      "required": false,
+      "description": "Experimental technique used for stress relaxation testing to extract tau and Ea. Required if relaxation_time_s is present.",
+      "example": "Rheometry_isothermal",
+      "allowed_values": [
+        "Rheometry_isothermal",
+        "DMA_stress_relaxation",
+        "other"
+      ]
+    },
+    {
+      "name": "recycling_cycles",
+      "type": "integer",
+      "required": true,
+      "description": "The mechanical processing history iteration count. 0 signifies a pristine/as-cured sample; >=1 tracks structural state after extrusion/molding.",
+      "example": 0
     },
     {
       "name": "source_id",
       "type": "string",
       "required": true,
-      "description": "Identifier linking to an entry in specs/source_map.json.",
-      "example": "paper_green_2018"
+      "description": "Identifier linking this row to an authoritative record within specs/source_map.json.",
+      "example": "paper_montarnal_2011"
     },
     {
       "name": "source_type",
       "type": "string",
-      "required": false,
-      "description": "Category of source (paper, database, web page, etc.).",
-      "example": "scientific_paper"
-    },
-    {
-      "name": "source_url",
-      "type": "string",
-      "required": false,
-      "description": "URL or landing page for the source.",
-      "example": "https://doi.org/10.1021/example"
+      "required": true,
+      "description": "Broad category provenance of the host data point.",
+      "example": "scientific_paper",
+      "allowed_values": [
+        "scientific_paper",
+        "database",
+        "github_repository",
+        "supplementary_data",
+        "ml_dataset"
+      ]
     },
     {
       "name": "doi",
       "type": "string",
       "required": false,
-      "description": "Digital Object Identifier when available.",
-      "example": "10.1021/example"
+      "description": "Digital Object Identifier mapping back to source publication payload.",
+      "example": "10.1126/science.1212648"
+    },
+    {
+      "name": "conflict_flag",
+      "type": "boolean",
+      "required": false,
+      "description": "Validation flag set to true if another distinct source reports anomalous deviations in kinetic profiles for the identical formulation signature.",
+      "example": false
     },
     {
       "name": "extraction_method",
       "type": "string",
       "required": false,
-      "description": "How the record was obtained (pdf_manual, pdf_table, web_scrape, etc.).",
-      "example": "pdf_table"
-    },
-    {
-      "name": "extraction_confidence",
-      "type": "string",
-      "required": false,
-      "description": "Confidence in extracted values: high, medium, low, or unknown.",
-      "example": "high"
+      "description": "Technical lineage pipeline execution pathway used to ingest this target point.",
+      "example": "pdf_table",
+      "allowed_values": [
+        "pdf_table",
+        "pdf_text_regex",
+        "manual",
+        "api"
+      ]
     },
     {
       "name": "notes",
       "type": "string",
       "required": false,
-      "description": "Free-text notes, caveats, or provenance details.",
-      "example": "Value taken from Table 2; unit inferred from caption."
+      "description": "Granular programmatic context or sample configuration markers (e.g., crosslinking density, stoichiometry deviations).",
+      "example": "Ea calculated using standard Arrhenius fit between 130 and 180 °C from SI Figure S4."
     }
   ]
 }
