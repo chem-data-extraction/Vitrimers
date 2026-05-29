@@ -1,101 +1,88 @@
 #!/usr/bin/env python3
-"""Merge extracted CSVs and write interim and processed datasets."""
+"""Consolidate extracted PDF and Web records into an interim dataset."""
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
-
+import sys
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
 
-PDF_CSV = ROOT / "data/extracted/pdf_extracted_records.csv"
-WEB_CSV = ROOT / "data/extracted/web_extracted_records.csv"
-SCHEMA_PATH = ROOT / "specs/dataset_schema.json"
-MERGED_PATH = ROOT / "data/interim/merged_records.csv"
-DATASET_PATH = ROOT / "data/processed/dataset.csv"
+
+def smart_find_smiles_column(df: pd.DataFrame) -> str | None:
+    """Find any column that likely contains SMILES strings."""
+    possible_names = [
+        "polymer_smiles", "polymer_SMILES", "monomer_components_smiles", 
+        "smiles", "SMILES", "structure"
+    ]
+    for name in possible_names:
+        for col in df.columns:
+            if str(col).strip().lower() == name.lower():
+                return col
+    for col in df.columns:
+        if "smiles" in str(col).lower():
+            return col
+    return None
 
 
-def load_schema_columns() -> list[str]:
-    with SCHEMA_PATH.open(encoding="utf-8") as f:
-        schema = json.load(f)
-    return [field["name"] for field in schema["fields"]]
+def main() -> int:
+    print("=== Starting Dataset Consolidation Pipeline ===")
+    
+    pdf_path = ROOT / "data/extracted/pdf_extracted_records.csv"
+    web_path = ROOT / "data/extracted/web_extracted_records.csv"
+    
+    if pdf_path.is_file():
+        df_pdf = pd.read_csv(pdf_path)
+        print(f"Loaded PDF extracted records: {len(df_pdf)} rows.")
+    else:
+        df_pdf = pd.DataFrame()
+        print("Warning: PDF extracted file not found.")
+        
+    if web_path.is_file():
+        df_web = pd.read_csv(web_path)
+        print(f"Loaded Web extracted records: {len(df_web)} rows.")
+    else:
+        df_web = pd.DataFrame()
+        print("Warning: Web extracted file not found.")
 
+    if not df_pdf.empty:
+        pdf_smiles_col = smart_find_smiles_column(df_pdf)
+        if pdf_smiles_col:
+            df_pdf["polymer_SMILES"] = df_pdf[pdf_smiles_col]
+            
+    if not df_web.empty:
+        web_smiles_col = smart_find_smiles_column(df_web)
+        if web_smiles_col:
+            df_web["polymer_SMILES"] = df_web[web_smiles_col]
 
-def map_pdf_row(row: pd.Series) -> dict:
-    notes = str(row.get("extraction_notes", "") or "")
-    return {
-        "record_id": row["record_id"],
-        "aptamer_sequence": row["aptamer_sequence"],
-        "target_name": row["target_name"],
-        "target_type": row.get("target_type", ""),
-        "measurement_type": row["measurement_type"],
-        "measurement_value": row.get("measurement_value"),
-        "measurement_unit": row.get("measurement_unit", ""),
-        "normalized_value_nm": row.get("measurement_value")
-        if str(row.get("measurement_unit", "")).lower() in ("nm", "nanomolar")
-        else None,
-        "assay_method": row.get("assay_method", ""),
-        "buffer": "",
-        "temperature_c": None,
-        "source_id": row["source_id"],
-        "source_type": "scientific_paper",
-        "source_url": "",
-        "doi": "",
-        "extraction_method": "pdf_table",
-        "extraction_confidence": row.get("extraction_confidence", ""),
-        "notes": notes,
+    rename_inputs = {
+        "dynamic_link_type": "dynamic_bond_type",
+        "bond_type": "dynamic_bond_type",
+        "temp_c": "temperature_C",
+        "relaxation_temp_c": "temperature_C"
     }
+    if not df_pdf.empty:
+        df_pdf.rename(columns=rename_inputs, inplace=True)
+    if not df_web.empty:
+        df_web.rename(columns=rename_inputs, inplace=True)
 
-
-def map_web_row(row: pd.Series) -> dict:
-    notes = str(row.get("extraction_notes", "") or "")
-    unit = str(row.get("measurement_unit", "") or "")
-    val = row.get("measurement_value")
-    norm = val if unit.lower() in ("nm", "nanomolar") else None
-    return {
-        "record_id": row["record_id"],
-        "aptamer_sequence": row["aptamer_sequence"],
-        "target_name": row["target_name"],
-        "target_type": row.get("target_type", ""),
-        "measurement_type": row["measurement_type"],
-        "measurement_value": val,
-        "measurement_unit": unit,
-        "normalized_value_nm": norm,
-        "assay_method": "",
-        "buffer": "",
-        "temperature_c": None,
-        "source_id": row["source_id"],
-        "source_type": "database",
-        "source_url": row.get("source_url", ""),
-        "doi": "",
-        "extraction_method": "web_scrape",
-        "extraction_confidence": row.get("extraction_confidence", ""),
-        "notes": notes,
-    }
-
-
-def build() -> pd.DataFrame:
-    pdf_df = pd.read_csv(PDF_CSV)
-    web_df = pd.read_csv(WEB_CSV)
-    rows = [map_pdf_row(r) for _, r in pdf_df.iterrows()]
-    rows += [map_web_row(r) for _, r in web_df.iterrows()]
-    columns = load_schema_columns()
-    return pd.DataFrame(rows, columns=columns)
-
-
-def main() -> None:
-    MERGED_PATH.parent.mkdir(parents=True, exist_ok=True)
-    DATASET_PATH.parent.mkdir(parents=True, exist_ok=True)
-
-    df = build()
-    df.to_csv(MERGED_PATH, index=False)
-    df.to_csv(DATASET_PATH, index=False)
-
-    print(f"Wrote {len(df)} rows to {MERGED_PATH.relative_to(ROOT)}")
-    print(f"Wrote {len(df)} rows to {DATASET_PATH.relative_to(ROOT)}")
+    df_merged = pd.concat([df_pdf, df_web], ignore_index=True)
+    df_merged = df_merged.loc[:, ~df_merged.columns.duplicated(keep='first')]
+    
+    if "record_id" in df_merged.columns:
+        df_merged["record_id"] = df_merged["record_id"].fillna(
+            df_merged.index.to_series().apply(lambda x: f"rec_web_auto_{x:05d}")
+        )
+    else:
+        df_merged["record_id"] = df_merged.index.to_series().apply(lambda x: f"rec_web_auto_{x:05d}")
+    
+    interim_path = ROOT / "data/interim/merged_records.csv"
+    interim_path.parent.mkdir(parents=True, exist_ok=True)
+    df_merged.to_csv(interim_path, index=False, encoding="utf-8")
+    print(f"Interim merged file created: {interim_path.relative_to(ROOT)}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

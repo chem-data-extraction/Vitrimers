@@ -1,0 +1,6 @@
+polymer_SMILES;relaxation_time_s;normalized_stress;temperature_C;dynamic_bond_type;crosslinker
+CC(O[Si](C)(C)C)C;811.765217693751;0.3717171717171718;170;silyl_ether_metathesis;CO[Si](C)(C)CCCCCCCC[Si](C)(C)OC
+CC(O[Si](C)(C)C)C;1319.8389344726922;0.36363636363636365;160;silyl_ether_metathesis;CO[Si](C)(C)CCCCCCCC[Si](C)(C)OC
+CC(O[Si](C)(C)C)C;2478.736828345732;0.36363636363636365;150;silyl_ether_metathesis;CO[Si](C)(C)CCCCCCCC[Si](C)(C)OC
+CC(O[Si](C)(C)C)C;3650.4478672802857;0.3656565656565657;140;silyl_ether_metathesis;CO[Si](C)(C)CCCCCCCC[Si](C)(C)OC
+CC(O[Si](C)(C)C)C;6632.822514630034;0.3676767676767678;130;silyl_ether_metathesis;CO[Si](C)(C)CCCCCCCC[Si](C)(C)OC

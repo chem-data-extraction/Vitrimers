@@ -1,0 +1,5 @@
+polymer_SMILES;time_s;normalized_stress;dynamic_bond_type
+B1(OC(C)C(C)O1)C2=CC=CC=C2;61.44570264701472;0.36805898745569243;boronic_ester_metathesis
+B1(OC(C)C(C)O1)C2=CC=CC=C2;55.043383252678204;0.3718735937981069;boronic_ester_metathesis
+B1(OC(C)C(C)O1)C2=CC=CC=C2;35.670807051337725;0.3695210427011708;boronic_ester_metathesis
+B1(OC(C)C(C)O1)C2=CC=CC=C2;10.537878441000707;0.37493664690418493;boronic_ester_metathesis

@@ -1,42 +1,66 @@
 {
-  "pdf_extraction_process": "Extract aptamer–protein binding records from selected PDF sources listed below.",
+  "pdf_extraction_process": "Extract vitrimer thermomechanical properties and network relaxation kinetics from selected PDF sources.",
   "output_records_file": "data/extracted/pdf_extracted_records.csv",
   "input_sources": [
     {
-      "source_id": "paper_green_2018",
-      "pdf_id": "green_2018_thrombin_aptamer",
-      "pdf_path": "data/raw/pdf/green_2018_thrombin_aptamer.pdf",
-      "source_url": "https://doi.org/10.1021/example.2018",
-      "doi": "10.1021/example.2018",
-      "selection_reason": "Foundational open-access paper with tabulated Kd values for thrombin-binding aptamers.",
-      "pages_used": [3, 4, 5],
-      "expected_content": "Table 2 with aptamer sequences and SPR Kd values",
-      "extraction_methods": ["pdfplumber_table", "manual_verification"],
-      "extraction_status": "template_pending"
+      "source_id": "leibler_2011",
+      "pdf_id": "leibler_2011_science",
+      "pdf_path": "data/raw/pdf/leibler_2011_science.pdf",
+      "source_url": "https://doi.org/10.1126/science.1212648",
+      "doi": "10.1126/science.1212648",
+      "selection_reason": "Foundational paper on silica-like malleable materials and epoxy-acid vitrimers.",
+      "pages_used": [1, 2, 3, 4, 5],
+      "expected_content": "Stress relaxation data, dependence of relaxation time on temperature, and catalyst SMILES.",
+      "extraction_methods": ["pandas_csv_parse", "manual_verification"],
+      "extraction_status": "ready"
     },
     {
-      "source_id": "paper_lee_2020",
-      "pdf_id": "lee_2020_multiplex_panel",
-      "pdf_path": "data/raw/pdf/lee_2020_multiplex_panel.pdf",
-      "source_url": "https://doi.org/10.1038/example.2020",
-      "doi": "10.1038/example.2020",
-      "selection_reason": "Recent multiplex study with supplementary binding table.",
-      "pages_used": [12, 13],
-      "expected_content": "Main-text summary table and reference to Supplementary Table S3",
-      "extraction_methods": ["camelot_lattice", "manual_verification"],
-      "extraction_status": "template_pending"
+      "source_id": "denissen_2015",
+      "pdf_id": "denissen_2015_afm",
+      "pdf_path": "data/raw/pdf/denissen_2015_afm.pdf",
+      "source_url": "https://doi.org/10.1002/adfm.201502499",
+      "doi": "10.1002/adfm.201502499",
+      "selection_reason": "Key study on catalyst-free vinylogous urethane vitrimers.",
+      "pages_used": [1, 2, 3, 4],
+      "expected_content": "Relaxation times at various temperatures, storage modulus data.",
+      "extraction_methods": ["pandas_csv_parse", "manual_verification"],
+      "extraction_status": "ready"
     },
     {
-      "source_id": "paper_kim_2015",
-      "pdf_id": "kim_2015_lysozyme_aptamer",
-      "pdf_path": "data/raw/pdf/kim_2015_lysozyme_aptamer.pdf",
-      "source_url": "https://doi.org/10.1016/example.2015",
-      "doi": "10.1016/example.2015",
-      "selection_reason": "Older benchmark for lysozyme aptamer with clear assay description.",
-      "pages_used": [6, 7],
-      "expected_content": "Figure caption and Table 1 with Kd in nM",
-      "extraction_methods": ["pymupdf_text", "manual_verification"],
-      "extraction_status": "template_pending"
+      "source_id": "tretbar_2019",
+      "pdf_id": "tretbar_2019_jacs",
+      "pdf_path": "data/raw/pdf/tretbar_2019_jacs.pdf",
+      "source_url": "https://doi.org/10.1021/jacs.9b08876",
+      "doi": "10.1021/jacs.9b08876",
+      "selection_reason": "Direct silyl ether metathesis for vitrimers with exceptional thermal stability.",
+      "pages_used": [1, 2, 3, 4],
+      "expected_content": "Stress relaxation curves, crosslinker details, and stability data.",
+      "extraction_methods": ["pandas_csv_parse"],
+      "extraction_status": "ready"
+    },
+    {
+      "source_id": "wang_2018",
+      "pdf_id": "wang_2018_macromolecules",
+      "pdf_path": "data/raw/pdf/wang_2018_macromolecules.pdf",
+      "source_url": "https://doi.org/10.1021/acs.macromol.8b01369",
+      "doi": "10.1021/acs.macromol.8b01369",
+      "selection_reason": "Polymer networks based on Schiff bases and imine exchange from renewable resources.",
+      "pages_used": [1, 2, 3, 5, 6],
+      "expected_content": "Reprocessability metrics, imine exchange kinetics, and relaxation times.",
+      "extraction_methods": ["pandas_csv_parse"],
+      "extraction_status": "ready"
+    },
+    {
+      "source_id": "hayashi_2025",
+      "pdf_id": "hayashi_2025_pps",
+      "pdf_path": "data/raw/pdf/hayashi_2025_pps.pdf",
+      "source_url": "https://doi.org/10.1016/j.progpolymsci.2025.102026",
+      "doi": "10.1016/j.progpolymsci.2025.102026",
+      "selection_reason": "Recent comprehensive review on fundamental physics and topology freezing of vitrimers.",
+      "pages_used": [1, 2, 27],
+      "expected_content": "Summary of temperature dependencies of viscosity, tan delta, and domain distances.",
+      "extraction_methods": ["pandas_csv_parse"],
+      "extraction_status": "ready"
     }
   ]
 }

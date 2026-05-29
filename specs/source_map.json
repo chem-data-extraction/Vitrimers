@@ -3,248 +3,46 @@
   "root_query": "vitrimer covalent adaptable network CAN stress relaxation activation energy Tg recycling dynamic bond exchange",
   "source_map_version": "0.3.0",
   "source_groups": {
-    "scientific_papers": [
-      {
-        "source_id": "paper_montarnal_2011",
-        "name": "Montarnal D., Capelot M., Tournilhac F., Leibler L. — Silica-Like Malleable Materials from Permanent Organic Networks",
-        "source_type": "journal_article",
-        "url": "https://doi.org/10.1126/science.1212648",
+    "journal_papers": {
+      "leibler_2011": {
         "doi": "10.1126/science.1212648",
-        "access_status": "open_access",
-        "access_method": "publisher PDF download",
-        "access_date": "2026-05-26",
-        "license": "Closed/Academic Institutional",
-        "expected_data_volume": "low",
-        "estimated_records": 8,
-        "available_data_types": [
-          "tables",
-          "text"
-        ],
-        "expected_fields": [
-          "polymer_name",
-          "dynamic_link_type",
-          "catalyst_name",
-          "catalyst_loading_mol_pct",
-          "tg_value_c",
-          "relaxation_time_s",
-          "relaxation_temp_c",
-          "activation_energy_kj_mol"
-        ],
-        "extraction_strategy": {
-          "recommended_method": "pdf_table",
-          "tool": "pdfplumber word-coordinate reconstruction",
-          "target": "Table S1 in Supplementary Materials and Section 3 for experimental formulation details"
-        },
-        "notes": "The pioneering vitrimer paper focusing on zinc-catalyzed transesterification of epoxy-acid networks. Contains pristine baseline and catalyst-dependent relaxation kinetics."
+        "title": "Silica-Like Malleable Materials from Permanent Organic Networks",
+        "expected_fields": ["polymer_SMILES", "temperature_C", "relaxation_time_s", "normalized_stress", "dynamic_bond_type", "catalyst_smiles"]
       },
-      {
-        "source_id": "paper_denissen_2015",
-        "name": "Denissen W., Rivero G., Nicolaÿ R., Leibler L., Winne J.M., Du Prez F.E. — Vinylogous Urethane Vitrimers",
-        "source_type": "journal_article",
-        "url": "https://doi.org/10.1002/adfm.201502589",
-        "doi": "10.1002/adfm.201502589",
-        "access_status": "open_access",
-        "access_method": "publisher PDF download",
-        "access_date": "2026-05-26",
-        "license": "CC-BY-3.0",
-        "expected_data_volume": "low",
-        "estimated_records": 5,
-        "available_data_types": [
-          "text",
-          "tables"
-        ],
-        "expected_fields": [
-          "polymer_name",
-          "dynamic_link_type",
-          "catalyst_name",
-          "tg_value_c",
-          "relaxation_time_s",
-          "relaxation_temp_c",
-          "recycling_cycles"
-        ],
-        "extraction_strategy": {
-          "recommended_method": "pdf_text_regex",
-          "tool": "PyMuPDF + regex",
-          "target": "Inline mechanical metrics and text block under Section 2 (Synthesis and Characterization)"
-        },
-        "notes": "Focuses on catalyst-free transamination of vinylogous urethanes. Contains tracking data for up to 4 consecutive grinding/compression molding recycling cycles."
+      "denissen_2015": {
+        "doi": "10.1002/adfm.201502499",
+        "title": "Vinylogous Urethane Vitrimers",
+        "expected_fields": ["polymer_SMILES", "temperature_C", "relaxation_time_s", "normalized_stress", "dynamic_bond_type"]
       },
-      {
-        "source_id": "paper_tretbar_2019",
-        "name": "Tretbar C.A., Neal J.A., Guan Z. — Direct Silyl Ether Metathesis for Vitrimers with Exceptional Thermal Stability",
-        "source_type": "journal_article",
-        "url": "https://doi.org/10.1021/jacs.9b04955",
-        "doi": "10.1021/jacs.9b04955",
-        "access_status": "closed_access",
-        "access_method": "institutional access PDF download",
-        "access_date": "2026-05-26",
-        "license": "Closed/ACS Curation",
-        "expected_data_volume": "low",
-        "estimated_records": 6,
-        "available_data_types": [
-          "tables",
-          "text"
-        ],
-        "expected_fields": [
-          "polymer_name",
-          "dynamic_link_type",
-          "catalyst_name",
-          "tg_value_c",
-          "activation_energy_kj_mol"
-        ],
-        "extraction_strategy": {
-          "recommended_method": "pdf_table",
-          "tool": "pdfplumber",
-          "target": "Table 1 and SI Section 4 for PEOH silylated network performance data"
-        },
-        "notes": "Covers acid-catalyzed silyl ether metathesis chemistry. Critical for introducing high thermal stability limits into the predictive modeling domain."
+      "tretbar_2019": {
+        "doi": "10.1021/jacs.9b08876",
+        "title": "Direct Silyl Ether Metathesis for Vitrimers with Exceptional Thermal Stability",
+        "expected_fields": ["polymer_SMILES", "relaxation_time_s", "normalized_stress", "temperature_C", "dynamic_bond_type", "crosslinker"]
       },
-      {
-        "source_id": "paper_wang_2018",
-        "name": "Wang S., Ma S., Li Q., Yuan W., Wang B., Zhu J. — Robust, Fire-Safe, Monomer-Recovery, Highly Malleable Thermosets from Renewable Bioresources",
-        "source_type": "journal_article",
-        "url": "https://doi.org/10.1021/acs.macromolecules.8b01351",
-        "doi": "10.1021/acs.macromolecules.8b01351",
-        "access_status": "closed_access",
-        "access_method": "institutional access PDF download",
-        "access_date": "2026-05-26",
-        "license": "Closed/ACS Curation",
-        "expected_data_volume": "low",
-        "estimated_records": 4,
-        "available_data_types": [
-          "tables",
-          "text"
-        ],
-        "expected_fields": [
-          "polymer_name",
-          "dynamic_link_type",
-          "catalyst_name",
-          "tg_value_c",
-          "recycling_cycles"
-        ],
-        "extraction_strategy": {
-          "recommended_method": "pdf_table",
-          "tool": "pdfplumber",
-          "target": "Table 1 for thermomechanical profiles of vanillin-derived Schiff base networks"
-        },
-        "notes": "Covers imine exchange chemistry within bio-based networks. Provides essential data points on chemical monomer recovery vs mechanical reprocessability."
+      "wang_2018": {
+        "doi": "10.1021/acs.macromol.8b01369",
+        "title": "Robust, Fire-Safe, Monomer-Recovery, Highly Malleable Thermosets from Renewable Bioresources",
+        "expected_fields": ["polymer_SMILES", "relaxation_time_s", "normalized_stress", "temperature_C", "dynamic_bond_type"]
       },
-      {
-        "source_id": "paper_li_2018",
-        "name": "Li L., Chen X., Jin K., Torkelson J.M. — Vitrimers Designed Both To Strongly Suppress Creep and To Recover Original Cross-Link Density after Reprocessing",
-        "source_type": "journal_article",
-        "url": "https://doi.org/10.1021/acs.macromolecules.8b00922",
-        "doi": "10.1021/acs.macromolecules.8b00922",
-        "access_status": "closed_access",
-        "access_method": "institutional access PDF download",
-        "access_date": "2026-05-26",
-        "license": "Closed/ACS Curation",
-        "expected_data_volume": "low",
-        "estimated_records": 7,
-        "available_data_types": [
-          "text",
-          "tables"
-        ],
-        "expected_fields": [
-          "polymer_name",
-          "dynamic_link_type",
-          "catalyst_name",
-          "catalyst_loading_mol_pct",
-          "tg_value_c",
-          "relaxation_time_s",
-          "relaxation_temp_c"
-        ],
-        "extraction_strategy": {
-          "recommended_method": "pdf_text_regex",
-          "tool": "PyMuPDF + regex",
-          "target": "Inline data in Results section tracking stretched exponential parameters at 160 °C"
-        },
-        "notes": "Deals with transesterification in thiol-epoxy architectures using DMAP catalysts. Excellent data source for testing creep resistance limits in hybrid permanent/dynamic topologies."
+      "hayashi_2025": {
+        "doi": "10.1016/j.progpolymsci.2025.102026",
+        "title": "Towards the next development of vitrimers: Recent key topics for the practical application",
+        "expected_fields": ["polymer_SMILES", "normalized_inverse_temperature", "log_viscosity", "dynamic_bond_type", "time_s", "normalized_stress", "tan_delta", "storage_modulus_Pa", "domain_distance_nm", "normalized_fluorescence_intensity"]
       }
-    ],
-    "databases": [
-      {
-        "source_id": "db_polyinfo",
-        "name": "PoLyInfo — NIMS Polymer Database",
-        "source_type": "database",
-        "url": "https://polymer.nims.go.jp/",
-        "doi": "",
-        "access_status": "registration_required",
-        "access_method": "manual GUI export only — automated scraping prohibited by Terms of Service",
-        "access_date": "2026-05-26",
-        "license": "NIMS non-commercial research terms",
-        "expected_data_volume": "medium",
-        "estimated_records": 50,
-        "available_data_types": [
-          "structured_records"
-        ],
-        "expected_fields": [
-          "polymer_name",
-          "tg_value_c"
-        ],
-        "extraction_strategy": {
-          "recommended_method": "manual",
-          "tool": "browser GUI export",
-          "target": "Baseline control samples of static, non-reversible epoxy and polyurethane thermosets"
-        },
-        "notes": "Used strictly to obtain baseline Tg values for conventional un-catalyzed network structures to calculate delta-Tg shifting values caused by catalytic addition."
+    },
+    "supplementary_materials": {
+      "tretbar_2019_si": {
+        "parent_source_id": "tretbar_2019",
+        "file_name": "tretbar_2019_jacs_si.pdf",
+        "description": "Supporting information containing synthetic procedures and detailed stress relaxation curves."
       }
-    ],
-    "aggregators": [
-      {
-        "source_id": "agg_pubchem_api",
-        "name": "PubChem PUG-REST API",
-        "source_type": "aggregator",
-        "url": "https://pubchem.ncbi.nlm.nih.gov/",
-        "doi": "",
-        "access_status": "open_access",
-        "access_method": "REST API — name-to-SMILES resolution",
-        "access_date": "2026-05-26",
-        "license": "public domain (NIH)",
-        "expected_data_volume": "metadata_only",
-        "estimated_records": 0,
-        "available_data_types": [
-          "json"
-        ],
-        "expected_fields": [
-          "monomer_components_smiles"
-        ],
-        "extraction_strategy": {
-          "recommended_method": "api",
-          "tool": "PubChemPy or requests",
-          "target": "chemical component name → canonical SMILES identifier resolution"
-        },
-        "notes": "Fulfills automated web extraction pipeline tasks. Translates textual component listings parsed from PDFs (e.g., 'DGEBA', 'sebacic acid') into canonical SMILES strings."
+    },
+    "github_repositories": {
+      "vashisth_lab": {
+        "url": "https://github.com/vashisth-lab/VitrimerScreening/tree/main",
+        "description": "Automated molecular dynamics and screening data for vitrimer network structures and glass transition temperatures.",
+        "expected_fields": ["polymer_SMILES", "temperature_C", "relaxation_time_s"]
       }
-    ],
-    "ml_datasets": [
-      {
-        "source_id": "ml_zenodo_vitrimer_kinetics",
-        "name": "Compiled Literature Curated Dataset on Covalent Adaptable Networks Relaxation",
-        "source_type": "ml_dataset",
-        "url": "https://zenodo.org/records/example_vitrimer_kinetics",
-        "doi": "10.5281/zenodo.example",
-        "access_status": "open_access",
-        "access_method": "direct CSV download from Zenodo",
-        "access_date": "2026-05-26",
-        "license": "CC-BY-4.0",
-        "expected_data_volume": "medium",
-        "estimated_records": 120,
-        "available_data_types": [
-          "csv"
-        ],
-        "expected_fields": [
-          "dynamic_link_type",
-          "tg_value_c",
-          "activation_energy_kj_mol"
-        ],
-        "extraction_strategy": {
-          "recommended_method": "api",
-          "tool": "pandas.read_csv()",
-          "target": "vitrimer_global_kinetic_matrix.csv"
-        },
-        "notes": "Reference open-source compilation mapping multiple dynamic chemistry classes. Utilized solely for external model cross-validation and benchmark comparison against raw PDF-extracted lines."
-      }
-    ]
+    }
   }
 }

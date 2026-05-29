@@ -1,0 +1,6 @@
+polymer_SMILES;relaxation_time_s;normalized_stress;dynamic_bond_type
+C(=O)-CC(=C)-N;79.029923246732;0.3711687549763233;vinylogous_urethane_transamination
+C(=O)-CC(=C)-N;102.60980677727086;0.37135314084566073;vinylogous_urethane_transamination
+C(=O)-CC(=C)-N;150.02799902670043;0.3699953903532667;vinylogous_urethane_transamination
+C(=O)-CC(=C)-N;244.06396743664428;0.37033901856430473;vinylogous_urethane_transamination
+C(=O)-CC(=C)-N;491.6031234229833;0.3708335079411643;vinylogous_urethane_transamination

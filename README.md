@@ -6,11 +6,11 @@ Publication-ready dataset for the course Extraction and preparation of chemical 
 
 ## Scientific task
 
-Collect experimentally reported glass transition temperatures ($T_g$), characteristic topology relaxation times ($\tau^*$), and Arrhenius activation energies ($E_a$) for covalent adaptable networks (vitrimers) to enable downstream structure–property modeling (QSPR/ML) evaluating how monomer composition, dynamic linkage type, catalyst profile, and mechanical recycling cycles dictate network dynamics and thermal stability.
+Collect experimentally or computationally reported glass transition temperatures ($T_g$), characteristic topology relaxation times ($\tau^*$), and Arrhenius activation energies ($E_a$) for covalent adaptable networks (vitrimers) to enable downstream structure–property modeling (QSPR/ML) evaluating how monomer composition, dynamic linkage type, catalyst profile, and mechanical recycling cycles dictate network dynamics and thermal stability.
 
 ## What is one record?
 
-One record = one experimentally reported thermomechanical or kinetic measurement for a specific vitrimer formulation (defined by its multi-component monomer SMILES mixture, dynamic linkage, and catalyst profile) under specific physical testing conditions from one identified source (one row in `data/processed/dataset.csv`).
+One record = one experimentally or computationaly reported thermomechanical or kinetic measurement for a specific vitrimer formulation (defined by its multi-component monomer SMILES mixture, dynamic linkage, and catalyst profile) under specific physical testing conditions from one identified source (one row in `data/processed/dataset.csv`).
 
 ## Repository structure
 
@@ -29,9 +29,7 @@ One record = one experimentally reported thermomechanical or kinetic measurement
 
 **Formats:** JSON for specs and manifests; CSV for tabular data; Python for pipelines; Markdown for reports and documentation only. Notebooks are optional.
 
-## Five course practices
-
-Develop the repository in five steps (see `reports/`):
+## Project components
 
 1. **Record definition and dataset schema** — `specs/dataset_schema.json`, Practice 1 report  
 2. **Source map** — `specs/source_map.json`, Practice 2 report  
@@ -39,16 +37,15 @@ Develop the repository in five steps (see `reports/`):
 4. **Web extraction** — `specs/web_extraction_manifest.json`, `scripts/extract_web.py`, Practice 4 report  
 5. **Cleaning, normalization and publication** — `specs/cleaning_pipeline.json`, cleaning scripts, Practice 5 report  
 
-Complete **`reports/final_report.md`** and **`dataset_card.md`** before submission.
 
 ## Data pipeline
 
 ```text
-raw (PDF / web / external)
-  → extract (pdf + web scripts) → data/extracted/*.csv
-  → build (merge) → data/interim/merged_records.csv
-  → clean → data/processed/dataset.csv
-  → validate (rules + pytest)
+raw (PDF / web streaming interface)
+  → extract (pdf + web python tools) → data/extracted/*.csv
+  → build (consolidation) → data/interim/merged_records.csv
+  → clean (normalization suite) → data/processed/dataset.csv
+  → validate (strict automated rule checks + pytest suite)
 ```
 
 ## Required final artifacts
@@ -83,6 +80,4 @@ python scripts/extract_web.py
 
 ## License and citation
 
-- Replace the placeholder in **`LICENSE`** before publication (e.g. CC-BY-4.0 or CC0-1.0, subject to upstream source licenses).
-- Fill in **`CITATION.cff`** with authors, version, and repository URL.
-- Summarize the dataset for users in **`dataset_card.md`**.
+The project is fully prepared and distributed under the Creative Commons Attribution 4.0 International framework (CC-BY-4.0). Detailed indexing configurations and bibliographic records are maintained inside the operational files LICENSE and CITATION.cff.

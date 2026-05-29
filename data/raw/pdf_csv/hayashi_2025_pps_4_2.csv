@@ -1,0 +1,2 @@
+polymer_SMILES;temperature_C;tan_delta;crosslinker;dynamic_bond_type
+C1C(O1)CN(CC2CO2)C3=CC=C(C=C3)CC4=CC=C(C=C4)N(CC5CO5)CC6CO6;51.00299927795159;1.0177179567881804;C1CCN2CCCN=C2CC1;transesterification

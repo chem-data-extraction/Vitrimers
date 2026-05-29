@@ -1,75 +1,118 @@
 #!/usr/bin/env python3
-"""
-Placeholder web extraction driver.
-
-Real implementation: use requests + BeautifulSoup (or Playwright for JS pages)
-following parser_plan in specs/web_extraction_manifest.json.
-"""
+"""Extract vitrimer screening data from the web (GitHub repository) based on web_extraction_manifest.json."""
 
 from __future__ import annotations
 
+import io
 import json
-from datetime import datetime, timezone
 from pathlib import Path
+import sys
+import pandas as pd
+import requests
 
 ROOT = Path(__file__).resolve().parents[1]
-MANIFEST = ROOT / "specs/web_extraction_manifest.json"
-LOG_PATH = ROOT / "data/extracted/extraction_log.jsonl"
 
 
-def append_log(entry: dict) -> None:
-    LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
-    with LOG_PATH.open("a", encoding="utf-8") as f:
-        f.write(json.dumps(entry) + "\n")
+def load_manifest() -> dict:
+    manifest_path = ROOT / "specs/web_extraction_manifest.json"
+    if not manifest_path.is_file():
+        print(f"Error: Manifest not found at {manifest_path}")
+        sys.exit(1)
+    with manifest_path.open(encoding="utf-8") as f:
+        return json.load(f)
 
 
-def write_placeholder_snapshot(page: dict) -> Path:
-    snap_path = ROOT / page["raw_snapshot_path"]
-    snap_path.parent.mkdir(parents=True, exist_ok=True)
-    html = (
-        f"<!-- placeholder snapshot for {page['page_id']} -->\n"
-        f"<html><body><p>Replace with downloaded content from {page['url']}</p></body></html>\n"
-    )
-    snap_path.write_text(html, encoding="utf-8")
-    return snap_path
+def main() -> int:
+    print("=== Starting Web Extraction (GitHub: VitrimerScreening) ===")
+    
+    manifest = load_manifest()
+    
+    if not manifest.get("input_pages"):
+        print("Error: No input pages defined in web_extraction_manifest.json")
+        return 1
+        
+    page_config = manifest["input_pages"][0]
+    source_id = page_config["source_id"]
+    url = page_config["url"]
+    
+    # Форсируем raw-url для скачивания напрямую
+    if "github.com" in url and "raw.githubusercontent.com" not in url:
+        url = url.replace("github.com", "raw.githubusercontent.com").replace("/blob/", "/")
+        
+    print(f"Fetching data from: {url}")
+    
+    try:
+        response = requests.get(url, timeout=30)
+        response.raise_for_status()
+    except requests.RequestException as e:
+        print(f"Error downloading data: {e}")
+        return 1
 
+    print("Successfully downloaded web data. Parsing raw entries...")
+    
+    try:
+        # Читаем CSV с автоматическим определением разделителя (запятая)
+        df_raw = pd.read_csv(io.StringIO(response.text))
+    except Exception as e:
+        print(f"Error parsing CSV data: {e}")
+        return 1
 
-def main() -> None:
-    with MANIFEST.open(encoding="utf-8") as f:
-        manifest = json.load(f)
+    print(f"Raw data parsed. Found {len(df_raw)} rows.")
 
-    print(f"Web extraction v{manifest.get('web_extraction_version')}")
-    print(f"Script: {manifest.get('script')}")
-    print(f"Output: {manifest.get('output_records_file')}")
-    print("\nPages to process:")
-
-    for page in manifest.get("input_pages", []):
-        print(
-            f"  - {page['page_id']}: {page['url']} "
-            f"(source_id={page['source_id']}, status={page.get('extraction_status')})"
-        )
-        snap = write_placeholder_snapshot(page)
-        print(f"    Wrote placeholder snapshot: {snap.relative_to(ROOT)}")
-        # Example integration:
-        # import requests
-        # from bs4 import BeautifulSoup
-        # resp = requests.get(page["url"], timeout=30)
-        # soup = BeautifulSoup(resp.text, "html.parser")
-        # rows = soup.select(page["parser_plan"]["selectors"]["row"])
-
-    append_log(
-        {
-            "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
-            "step": "web_extraction",
-            "source_id": "manifest_placeholder",
-            "status": "template",
-            "tool": "extract_web.py",
-            "output": str(manifest.get("output_records_file")),
-            "issue": "Placeholder HTML only; add requests/BeautifulSoup parser",
+    processed_records = []
+    
+    for idx, row in df_raw.iterrows():
+        record_id = f"rec_vit_web_{source_id}_{idx+1:04d}"
+        
+        # Извлекаем компоненты
+        acid_smiles = str(row.get("acid", "")).strip()
+        epoxide_smiles = str(row.get("epoxide", "")).strip()
+        
+        # Если критически важные компоненты пусты — пропускаем строку
+        if not acid_smiles or not epoxide_smiles or acid_smiles == "nan" or epoxide_smiles == "nan":
+            continue
+            
+        # Объединяем через точку в соответствии с правиламиdataset_schema.json
+        combined_smiles = f"{acid_smiles}.{epoxide_smiles}"
+        
+        # Конвертируем температуру Tg из Кельвинов в Цельсии
+        tg_k = row.get("tg")
+        try:
+            tg_c = float(tg_k) - 273.15 if pd.notna(tg_k) else float("nan")
+        except (ValueError, TypeError):
+            tg_c = float("nan")
+            
+        # Формируем запись, заполняя недостающие экспериментальные поля явными NaN
+        record = {
+            "record_id": record_id,
+            "source_id": source_id,
+            "polymer_name": "Screened Epoxy-Acid Vitrimer Network",
+            "monomer_components_smiles": combined_smiles,
+            "dynamic_link_type": "transesterification",  # Классика для эпокси-кислотных систем
+            "catalyst_name": float("nan"),               # В скрининге катализатор не указан
+            "catalyst_loading_mol_pct": float("nan"),
+            "tg_value_c": tg_c,
+            "relaxation_time_s": float("nan"),
+            "relaxation_temp_c": float("nan"),
+            "activation_energy_kj_mol": float("nan"),
+            "data_provenance": "github_repository",
+            "doi": page_config.get("doi") if pd.notna(page_config.get("doi")) else float("nan"),
+            "conflict_flag": False,
+            "extraction_method": "api",
+            "notes": "Extracted from Vashisth Lab screening dataset. Tg converted from Kelvin to Celsius."
         }
-    )
-    print(f"\nAppended placeholder event to {LOG_PATH.relative_to(ROOT)}")
+        processed_records.append(record)
+
+    df_out = pd.DataFrame(processed_records)
+    
+    # Путь сохранения CSV
+    output_path = ROOT / "data/extracted/web_extracted_records.csv"
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    df_out.to_csv(output_path, index=False, encoding="utf-8")
+    print(f"Saved {len(df_out)} web records to {output_path.relative_to(ROOT)}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

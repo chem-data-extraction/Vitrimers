@@ -1,176 +1,108 @@
 {
-  "schema_version": "0.1.0",
-  "dataset_title": "Vitrimer Thermomechanical Properties and Network Relaxation Kinetics Dataset",
+  "schema_version": "0.2.0",
+  "dataset_title": "Vitrimer Thermomechanical Properties and Network Dynamics Dataset",
   "fields": [
     {
       "name": "record_id",
       "type": "string",
       "required": true,
-      "description": "Stable unique identifier for one vitrimer formulation or characterization record.",
-      "example": "rec_vit_epoxy_montarnal2011_pdf_001"
-    },
-    {
-      "name": "polymer_name",
-      "type": "string",
-      "required": true,
-      "description": "Descriptive or chemical name of the network as given in the literature.",
-      "example": "Zinc-catalyzed epoxy-acid vitrimer network",
-      "normalization_rule": "Preserve original text representation; group by dynamic chemistry if generic."
-    },
-    {
-      "name": "monomer_components_smiles",
-      "type": "string",
-      "required": true,
-      "description": "Dot-separated canonical SMILES representing all raw monomer and crosslinker components forming the network matrix.",
-      "example": "CC1(C2=CC=C(OCC3CO3)C=C2)C4=CC=C(OCC5CO5)C=C4.CCCCCCCCC(=O)O",
-      "normalization_rule": "Standardize components individually via RDKit, sort alphabetically, and concatenate with dots."
-    },
-    {
-      "name": "dynamic_link_type",
-      "type": "string",
-      "required": true,
-      "description": "The predominant type of exchangeable dynamic covalent bond governing the network architecture.",
-      "example": "transesterification",
-      "allowed_values": [
-        "transesterification",
-        "transamination",
-        "silyl_ether_metathesis",
-        "imine_exchange",
-        "disulfide_exchange",
-        "other_associative",
-        "baseline_permanent"
-      ]
-    },
-    {
-      "name": "catalyst_name",
-      "type": "string",
-      "required": true,
-      "description": "Chemical name or abbreviation of the catalyst driving the exchange reaction. Use 'none' for catalyst-free systems.",
-      "example": "Zn(Acac)2"
-    },
-    {
-      "name": "catalyst_loading_mol_pct",
-      "type": "number",
-      "required": false,
-      "description": "Molar concentration of the catalyst relative to the functional exchange groups, in mol%. Equal to 0 if catalyst_name is 'none'.",
-      "example": 5.0
-    },
-    {
-      "name": "tg_value_c",
-      "type": "number",
-      "required": true,
-      "description": "Glass transition temperature standardized to Celsius (°C) via pipeline normalization routines.",
-      "example": 45.2
-    },
-    {
-      "name": "relaxation_time_s",
-      "type": "number",
-      "required": false,
-      "description": "Characteristic network stress relaxation time (tau*, usually at 37% or 1/e of initial modulus) in seconds.",
-      "example": 85.0
-    },
-    {
-      "name": "relaxation_temp_c",
-      "type": "number",
-      "required": false,
-      "description": "The specific isothermal temperature condition in Celsius (°C) under which the relaxation_time_s was determined.",
-      "example": 170.0
-    },
-    {
-      "name": "activation_energy_kj_mol",
-      "type": "number",
-      "required": false,
-      "description": "Arrhenius activation energy (Ea) calculated from high-temperature stress relaxation or rheological rate measurements.",
-      "example": 88.3
-    },
-    {
-      "name": "tg_measurement_method",
-      "type": "string",
-      "required": true,
-      "description": "Experimental technique used to determine the glass transition temperature (Tg).",
-      "example": "DSC",
-      "allowed_values": [
-        "DSC",
-        "DMA_tan_delta",
-        "DMA_E_loss",
-        "TMA",
-        "other",
-        "unknown"
-      ]
-    },
-    {
-      "name": "relaxation_measurement_method",
-      "type": "string",
-      "required": false,
-      "description": "Experimental technique used for stress relaxation testing to extract tau and Ea. Required if relaxation_time_s is present.",
-      "example": "Rheometry_isothermal",
-      "allowed_values": [
-        "Rheometry_isothermal",
-        "DMA_stress_relaxation",
-        "other"
-      ]
-    },
-    {
-      "name": "recycling_cycles",
-      "type": "integer",
-      "required": true,
-      "description": "The mechanical processing history iteration count. 0 signifies a pristine/as-cured sample; >=1 tracks structural state after extrusion/molding.",
-      "example": 0
+      "description": "Unique identifier for the vitrimer data record."
     },
     {
       "name": "source_id",
       "type": "string",
       "required": true,
-      "description": "Identifier linking this row to an authoritative record within specs/source_map.json.",
-      "example": "paper_montarnal_2011"
-    },
-    {
-      "name": "source_type",
-      "type": "string",
-      "required": true,
-      "description": "Broad category provenance of the host data point.",
-      "example": "scientific_paper",
-      "allowed_values": [
-        "scientific_paper",
-        "database",
-        "github_repository",
-        "supplementary_data",
-        "ml_dataset"
-      ]
+      "description": "Source identifier linking to specs/source_map.json."
     },
     {
       "name": "doi",
       "type": "string",
       "required": false,
-      "description": "Digital Object Identifier mapping back to source publication payload.",
-      "example": "10.1126/science.1212648"
+      "description": "Digital Object Identifier mapping back to the source publication."
     },
     {
-      "name": "conflict_flag",
-      "type": "boolean",
+      "name": "polymer_SMILES",
+      "type": "string",
+      "required": true,
+      "description": "Canonical SMILES representing the polymer network or monomer components."
+    },
+    {
+      "name": "dynamic_bond_type",
+      "type": "string",
+      "required": true,
+      "description": "Type of dynamic exchange bond (e.g., transesterification, imine_exchange)."
+    },
+    {
+      "name": "temperature_C",
+      "type": "number",
       "required": false,
-      "description": "Validation flag set to true if another distinct source reports anomalous deviations in kinetic profiles for the identical formulation signature.",
-      "example": false
+      "description": "Experimental temperature in degrees Celsius."
     },
     {
-      "name": "extraction_method",
+      "name": "relaxation_time_s",
+      "type": "number",
+      "required": false,
+      "description": "Stress relaxation time in seconds."
+    },
+    {
+      "name": "normalized_stress",
+      "type": "number",
+      "required": false,
+      "description": "Normalized stress value during relaxation."
+    },
+    {
+      "name": "storage_modulus_Pa",
+      "type": "number",
+      "required": false,
+      "description": "Storage modulus in Pascals."
+    },
+    {
+      "name": "catalyst_smiles",
       "type": "string",
       "required": false,
-      "description": "Technical lineage pipeline execution pathway used to ingest this target point.",
-      "example": "pdf_table",
-      "allowed_values": [
-        "pdf_table",
-        "pdf_text_regex",
-        "manual",
-        "api"
-      ]
+      "description": "SMILES of the catalyst used in the formulation."
     },
     {
-      "name": "notes",
+      "name": "crosslinker",
       "type": "string",
       "required": false,
-      "description": "Granular programmatic context or sample configuration markers (e.g., crosslinking density, stoichiometry deviations).",
-      "example": "Ea calculated using standard Arrhenius fit between 130 and 180 °C from SI Figure S4."
+      "description": "SMILES or designation of the crosslinking agent."
+    },
+    {
+      "name": "normalized_inverse_temperature",
+      "type": "number",
+      "required": false,
+      "description": "Normalized inverse temperature metric (e.g., Tg/T)."
+    },
+    {
+      "name": "log_viscosity",
+      "type": "number",
+      "required": false,
+      "description": "Logarithm of the measured viscosity."
+    },
+    {
+      "name": "time_s",
+      "type": "number",
+      "required": false,
+      "description": "Time in seconds for transient measurements."
+    },
+    {
+      "name": "tan_delta",
+      "type": "number",
+      "required": false,
+      "description": "Tangent of the phase angle (damping factor)."
+    },
+    {
+      "name": "normalized_fluorescence_intensity",
+      "type": "number",
+      "required": false,
+      "description": "Normalized fluorescence intensity for specific dynamic assays."
+    },
+    {
+      "name": "domain_distance_nm",
+      "type": "number",
+      "required": false,
+      "description": "Domain distance measurement in nanometers."
     }
   ]
 }

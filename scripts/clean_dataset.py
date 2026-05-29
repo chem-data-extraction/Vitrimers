@@ -1,118 +1,95 @@
 #!/usr/bin/env python3
-"""Clean and normalize merged or extracted records into the final dataset."""
+"""Clean and normalize merged vitrimer records into the final dataset."""
 
 from __future__ import annotations
 
 import json
 from pathlib import Path
-
+import sys
+import numpy as np
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parents[1]
-
 MERGED_PATH = ROOT / "data/interim/merged_records.csv"
-PDF_CSV = ROOT / "data/extracted/pdf_extracted_records.csv"
-WEB_CSV = ROOT / "data/extracted/web_extracted_records.csv"
 SCHEMA_PATH = ROOT / "specs/dataset_schema.json"
 DATASET_PATH = ROOT / "data/processed/dataset.csv"
 
-MISSING_TOKENS = {"", "na", "n/a", "none", "null", "-", "nan"}
-
-
-def normalize_sequence(seq: object) -> str:
-    if pd.isna(seq):
-        return ""
-    text = str(seq).upper().strip()
-    return "".join(c for c in text if c in "ACGTU")
-
-
-def normalize_missing_values(value: object):
-    if pd.isna(value):
-        return None
-    text = str(value).strip().lower()
-    if text in MISSING_TOKENS:
-        return None
-    return value
-
-
-def normalize_measurement_to_nm(value: object, unit: object):
-    if pd.isna(value) or value == "" or value is None:
-        return None
-    try:
-        num = float(value)
-    except (TypeError, ValueError):
-        return None
-    if pd.isna(unit):
-        return None
-    u = str(unit).strip().lower()
-    factors = {
-        "nm": 1.0,
-        "nanomolar": 1.0,
-        "pm": 0.001,
-        "picomolar": 0.001,
-        "μm": 1000.0,
-        "um": 1000.0,
-        "micromolar": 1000.0,
-        "µm": 1000.0,
-        "m": 1e9,
-        "molar": 1e9,
-    }
-    factor = factors.get(u)
-    if factor is None:
-        return None
-    return num * factor
-
-
-def clean_dataframe(df: pd.DataFrame) -> pd.DataFrame:
-    out = df.copy()
-    if "aptamer_sequence" in out.columns:
-        out["aptamer_sequence"] = out["aptamer_sequence"].map(normalize_sequence)
-    for col in out.columns:
-        if col in ("record_id", "aptamer_sequence"):
-            continue
-        out[col] = out[col].map(normalize_missing_values)
-    if "measurement_value" in out.columns and "measurement_unit" in out.columns:
-        out["normalized_value_nm"] = [
-            normalize_measurement_to_nm(v, u)
-            for v, u in zip(out["measurement_value"], out["measurement_unit"])
-        ]
-    if "record_id" in out.columns:
-        out = out.drop_duplicates(subset=["record_id"], keep="first")
-    return out
+MISSING_TOKENS = {"", "na", "n/a", "none", "null", "-", "nan", "NaN", "nd", "n.d."}
 
 
 def load_schema_columns() -> list[str]:
-    with SCHEMA_PATH.open(encoding="utf-8") as f:
-        schema = json.load(f)
-    return [field["name"] for field in schema["fields"]]
+    """Reads the expected fields from the dataset schema specification."""
+    if SCHEMA_PATH.is_file():
+        try:
+            with SCHEMA_PATH.open(encoding="utf-8") as f:
+                schema = json.load(f)
+                return [field["name"] for field in schema.get("fields", [])]
+        except Exception:
+            pass
+    return [
+        'record_id', 'source_id', 'doi', 'polymer_SMILES', 'dynamic_bond_type', 
+        'temperature_C', 'relaxation_time_s', 'normalized_stress', 'storage_modulus_Pa', 
+        'catalyst_smiles', 'crosslinker', 'normalized_inverse_temperature', 
+        'log_viscosity', 'time_s', 'tan_delta', 'normalized_fluorescence_intensity', 
+        'domain_distance_nm'
+    ]
 
 
-def load_input_frame() -> pd.DataFrame:
-    if MERGED_PATH.is_file():
-        return pd.read_csv(MERGED_PATH)
-    import importlib.util
-
-    build_path = ROOT / "scripts" / "build_dataset.py"
-    spec = importlib.util.spec_from_file_location("build_dataset", build_path)
-    if spec is None or spec.loader is None:
-        raise ImportError(f"Cannot load {build_path}")
-    module = importlib.util.module_from_spec(spec)
-    spec.loader.exec_module(module)
-    return module.build()
+def clean_smiles(seq: object) -> str | None:
+    """Removes invalid whitespace and string artifacts from SMILES."""
+    if pd.isna(seq):
+        return None
+    text = str(seq).strip()
+    if text.lower() in MISSING_TOKENS:
+        return None
+    text = text.replace('\r', '').replace('\n', '').replace('"', '').replace("'", "")
+    return text if text else None
 
 
-def main() -> None:
-    df = load_input_frame()
+def normalize_missing_values(value: object) -> object:
+    """Maps recognized missing value tokens to standard NumPy NaN."""
+    if pd.isna(value):
+        return np.nan
+    text = str(value).strip()
+    if text.lower() in MISSING_TOKENS or text == "":
+        return np.nan
+    return value
+
+
+def main() -> int:
+    print("=== Starting Dataset Cleaning Pipeline ===")
+    
+    if not MERGED_PATH.is_file():
+        print(f"Error: Interim file not found at {MERGED_PATH.relative_to(ROOT)}.")
+        return 1
+
+    df = pd.read_csv(MERGED_PATH, encoding='utf-8')
+    print(f"Loaded {len(df)} rows from interim merged records.")
+
     columns = load_schema_columns()
     for col in columns:
         if col not in df.columns:
-            df[col] = None
+            df[col] = np.nan
+            
     df = df[columns]
-    cleaned = clean_dataframe(df)
+    
+    smiles_columns = ["polymer_SMILES", "catalyst_smiles", "crosslinker"]
+    for col in df.columns:
+        if col in smiles_columns:
+            df[col] = df[col].apply(clean_smiles)
+        else:
+            df[col] = df[col].apply(normalize_missing_values)
+            
+    df.dropna(subset=["polymer_SMILES"], inplace=True)
+    df.drop_duplicates(subset=["record_id"], keep="first", inplace=True)
+    
     DATASET_PATH.parent.mkdir(parents=True, exist_ok=True)
-    cleaned.to_csv(DATASET_PATH, index=False)
-    print(f"Wrote {len(cleaned)} cleaned rows to {DATASET_PATH.relative_to(ROOT)}")
+    df.to_csv(DATASET_PATH, index=False, encoding='utf-8')
+    
+    print("Dataset cleaning completed successfully.")
+    print(f"Wrote {len(df)} cleaned rows to {DATASET_PATH.relative_to(ROOT)}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    sys.exit(main())

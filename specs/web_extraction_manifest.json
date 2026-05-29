@@ -1,55 +1,24 @@
 {
-  "web_extraction_version": "0.1.0",
-  "output_records_file": "data/extracted/web_extracted_records.csv",
+  "web_extraction_version": "2.1.0",
   "script": "scripts/extract_web.py",
+  "output_records_file": "data/extracted/web_extracted_records.json",
   "input_pages": [
     {
-      "source_id": "db_aptagen",
-      "page_id": "aptagen_thrombin_entries",
-      "url": "https://example.org/aptamer-db/target/thrombin",
-      "access_date": "2026-02-01",
+      "source_id": "vashisth_lab",
+      "page_id": "vitrimer_screening_labeled",
+      "url": "https://github.com/vashisth-lab/VitrimerScreening/blob/main/data/labeled.csv",
+      "access_date": "2026-05-28",
       "access_status": "open_access",
-      "robots_notes": "robots.txt allows crawling of /aptamer-db/ with 1 req/s; respect terms of use.",
-      "selection_reason": "Structured HTML tables listing curated thrombin aptamer Kd values.",
-      "page_type": "database_browse_page",
-      "expected_content": "HTML table with columns: sequence, target, Kd, method",
+      "robots_notes": "Public GitHub repository. Data accessible via raw.githubusercontent.com endpoint.",
+      "selection_reason": "Contains structured quantum chemistry and MD screening data (Tg, Ea) for polymer networks.",
+      "page_type": "raw_csv_repository",
+      "expected_content": "CSV file containing SMILES structures, Glass Transition Temperatures (Tg), and Activation Energies (Ea).",
       "parser_plan": {
-        "tool": "requests + BeautifulSoup",
-        "selectors": {
-          "table": "table.binding-records",
-          "row": "tbody tr",
-          "sequence": "td.seq",
-          "target": "td.target",
-          "value": "td.kd",
-          "unit": "td.unit"
-        }
+        "tool": "requests + csv.DictReader",
+        "selectors": null
       },
-      "raw_snapshot_path": "data/raw/web/aptagen_thrombin_entries.html",
-      "extraction_status": "template_pending"
-    },
-    {
-      "source_id": "db_aptagen",
-      "page_id": "aptagen_lysozyme_entries",
-      "url": "https://example.org/aptamer-db/target/lysozyme",
-      "access_date": "2026-02-02",
-      "access_status": "open_access",
-      "robots_notes": "Same policy as thrombin browse page.",
-      "selection_reason": "Complements PDF sources for lysozyme aptamer records.",
-      "page_type": "database_browse_page",
-      "expected_content": "Paginated result list with affinity fields",
-      "parser_plan": {
-        "tool": "requests + BeautifulSoup",
-        "selectors": {
-          "table": "table.binding-records",
-          "row": "tbody tr",
-          "sequence": "td.seq",
-          "target": "td.target",
-          "value": "td.kd",
-          "unit": "td.unit"
-        }
-      },
-      "raw_snapshot_path": "data/raw/web/aptagen_lysozyme_entries.html",
-      "extraction_status": "template_pending"
+      "raw_snapshot_path": "data/raw/web/vitrimer_screening_labeled.csv",
+      "extraction_status": "active"
     }
   ]
 }

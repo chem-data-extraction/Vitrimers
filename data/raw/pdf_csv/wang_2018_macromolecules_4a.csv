@@ -1,0 +1,5 @@
+polymer_SMILES;relaxation_time_s;normalized_stress;temperature_C;dynamic_bond_type;
+C1=CC=C(C(=C1)C(=O)CCC(=O)NS(=O)(=O)OC[C@@H]2[C@H]([C@H]([C@@H](O2)N3C=NC4=C(N=CN=C43)N)O)O)C(F)(F)F;108.86315876220692;0.37338992129877646;160;imine_exchange;
+C1=CC=C(C(=C1)C(=O)CCC(=O)NS(=O)(=O)OC[C@@H]2[C@H]([C@H]([C@@H](O2)N3C=NC4=C(N=CN=C43)N)O)O)C(F)(F)F;236.762948617578;0.36850302855494677;150;imine_exchange;
+C1=CC=C(C(=C1)C(=O)CCC(=O)NS(=O)(=O)OC[C@@H]2[C@H]([C@H]([C@@H](O2)N3C=NC4=C(N=CN=C43)N)O)O)C(F)(F)F;742.9230705838725;0.37055502904940474;140;imine_exchange;
+C1=CC=C(C(=C1)C(=O)CCC(=O)NS(=O)(=O)OC[C@@H]2[C@H]([C@H]([C@@H](O2)N3C=NC4=C(N=CN=C43)N)O)O)C(F)(F)F;1523.7545840372495;0.38182867032016166;130;imine_exchange;

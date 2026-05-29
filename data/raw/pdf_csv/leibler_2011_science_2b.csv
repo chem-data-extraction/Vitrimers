@@ -1,0 +1,5 @@
+polymer_SMILES;relaxation_time_s;normalized_stress;temperature_C;dynamic_bond_type;catalyst_SMILES;dynamic_bond_type
+CC(C)(C1=CC=C(C=C1)OCC2CO2)C3=CC=C(C=C3)OCC4CO4;338078.29181494657;0.3708307241152844;160;transesterification;CC(=O)O[Zn]OC(=O)C;transesterification
+CC(C)(C1=CC=C(C=C1)OCC2CO2)C3=CC=C(C=C3)OCC4CO4;574733.0960854092;0.3703328089441451;150;transesterification;CC(=O)O[Zn]OC(=O)C;transesterification
+CC(C)(C1=CC=C(C=C1)OCC2CO2)C3=CC=C(C=C3)OCC4CO4;695729.537366548;0.37095596658164454;140;transesterification;CC(=O)O[Zn]OC(=O)C;transesterification
+CC(C)(C1=CC=C(C=C1)OCC2CO2)C3=CC=C(C=C3)OCC4CO4;905693.9501779359;0.373754066561789;130;transesterification;CC(=O)O[Zn]OC(=O)C;transesterification
