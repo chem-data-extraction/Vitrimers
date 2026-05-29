@@ -4,10 +4,10 @@ This folder holds the **publication-ready** dataset: one row per record, columns
 
 ## Main file
 
-- `dataset.csv` — final dataset produced by `scripts/build_dataset.py` and `scripts/clean_dataset.py`, validated with `scripts/validate_project.py`
+- `dataset.csv` — Final schema-compliant dataset produced sequentially by the pipeline through `scripts/build_dataset.py` (aggregation) and `scripts/clean_dataset.py` (deep normalization and filtering), and fully verified via `scripts/validate_project.py`.
 
 ## Guidelines
 
-- Regenerate this file from scripts; avoid hand-editing except for small template fixes during setup.
-- Before submission, replace example rows with your project records.
-- Record the dataset version or commit hash in `reports/final_report.md` and `dataset_card.md`.
+- Always regenerate this file automatically by running the modular pipeline scripts; manual data overrides or direct cell editing within the CSV spreadsheet are strictly prohibited to ensure end-to-end procedural reproducibility.
+- All template rows and structural test placeholding items must be completely overwritten by verified, project-specific vitrimer and network kinetics records before production deployment.
+- Maintain rigorous provenance tracking by logging the current generation date, row metrics, and the repository commit hash in both `reports/final_report.md` and the definitive `dataset_card.md` artifact.
