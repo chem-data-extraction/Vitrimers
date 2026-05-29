@@ -6,7 +6,7 @@ Publication-ready dataset for the course Extraction and preparation of chemical 
 
 ## Scientific task
 
-Collect experimentally or computationally reported glass transition temperatures ($T_g$), characteristic topology relaxation times ($\tau^*$), and Arrhenius activation energies ($E_a$) for covalent adaptable networks (vitrimers) to enable downstream structure–property modeling (QSPR/ML) evaluating how monomer composition, dynamic linkage type, catalyst profile, and mechanical recycling cycles dictate network dynamics and thermal stability.
+Collect experimentally or computationally reported glass transition temperatures ($T_g$), characteristic topology relaxation times ($\tau^*$), and etc. for covalent adaptable networks (vitrimers) to enable downstream structure–property modeling (QSPR/ML) evaluating how monomer composition, dynamic linkage type, catalyst profile, and mechanical recycling cycles dictate network dynamics and thermal stability.
 
 ## What is one record?
 
