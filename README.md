@@ -66,17 +66,90 @@ pytest
 
 ## How to build the dataset
 
+The dataset generation workflow consists of four sequential stages: extraction, aggregation, normalization, and publication. Each stage is implemented as an independent Python script to ensure reproducibility and modularity of the data processing pipeline.
+
+### 1. Extraction (Data Ingestion)
+
+#### PDF extraction
+
 ```bash
-python scripts/build_dataset.py    # merge extracts → interim + processed
-python scripts/clean_dataset.py    # normalize and write processed dataset
+python scripts/extract_pdf.py
 ```
 
-Placeholder extraction (no PDF/HTML libraries required):
+Parses target vitrimer literature using PDF extraction tools and manual verification procedures. Thermomechanical measurements, relaxation kinetics parameters, and associated metadata are extracted from tables, text blocks, and digitized figures and stored in:
+
+```text
+data/extracted/pdf_extracted_records.csv
+```
+
+#### Web extraction
+
+```bash
+python scripts/extract_web.py
+```
+
+Retrieves structured vitrimer data from online resources and supplementary datasets. Extracted records are standardized into tabular format and written to:
+
+```text
+data/extracted/web_extracted_records.csv
+```
+
+### 2. Aggregation and Harmonization
+
+```bash
+python scripts/build_dataset.py
+```
+
+Combines heterogeneous extraction outputs into a unified intermediate dataset. During this stage, the pipeline:
+
+* merges records from all extraction sources;
+* maps source-specific column names to the project schema;
+* resolves duplicate or overlapping entries;
+* generates unique record identifiers when required;
+* exports the consolidated dataset to:
+
+```text
+data/interim/merged_records.csv
+```
+
+### 3. Normalization and Data Cleaning
+
+```bash
+python scripts/clean_dataset.py
+```
+
+Processes the merged dataset according to the rules defined in `specs/cleaning_pipeline.json`. The cleaning workflow includes:
+
+* normalization of monomer SMILES representations;
+* standardization of categorical values and null tokens;
+* whitespace and formatting corrections;
+* duplicate removal;
+* validation of mandatory fields;
+* schema compliance checks.
+
+The finalized publication-ready dataset is exported to:
+
+```text
+data/processed/dataset.csv
+```
+
+### Complete workflow
+
+To reproduce the dataset from scratch, execute the scripts in the following order:
 
 ```bash
 python scripts/extract_pdf.py
 python scripts/extract_web.py
+python scripts/build_dataset.py
+python scripts/clean_dataset.py
 ```
+
+Upon successful completion, the final dataset will be available at:
+
+```text
+data/processed/dataset.csv
+```
+
 
 ## License and citation
 
